@@ -87,6 +87,7 @@ exports.login = async (req, res) => {
     }
 }
 
+//Wait for Mid Ware for security 
 exports.currentUser = async (req, res) => {
 
     try {
