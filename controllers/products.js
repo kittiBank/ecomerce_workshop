@@ -167,7 +167,7 @@ const handleQuery = async (req, res, query) => {
 
 const handlePrice = async (req, res, priceRange) => {
     try {
-        const product = await prisma.product.findMany({
+        const products = await prisma.product.findMany({
             where: {
                 price: {
                     gte: priceRange[0],
@@ -180,11 +180,34 @@ const handlePrice = async (req, res, priceRange) => {
             }
         })
 
-        res.send(product)
+        res.send(products)
 
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Search error' })
+    }
+}
+
+const handleCategory = async (req, res, categoryId) => {
+    try {
+        const product = await prisma.product.findMany({
+            where: {
+                //Loop for check many category
+                categoryId: {
+                    in: categoryId.map((id) => Number(id)) //id is param for get value 
+                }
+
+            },
+            include: {
+                category: true,
+                images: true
+            }
+        })
+
+        res.send(product)
+
+    } catch (err) {
+        console.log(500).json({ messgae: 'Search Error' })
     }
 }
 
@@ -199,6 +222,7 @@ exports.searchFilters = async (req, res) => {
         }
         if (category) {
             console.log('category-->', category)
+            await handleCategory(req, res, category)
         }
         if (price) {
             console.log('price-->', price)
