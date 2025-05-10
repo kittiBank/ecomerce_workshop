@@ -23,9 +23,9 @@ exports.register = async (req, res) => {
             }
         })
         if (user) {
-            return res.status(400).json({ message: "Email already exits!!"})
+            return res.status(400).json({ message: "Email already exits!!" })
         }
-        
+
         // Step 3 HashPassword 
         const hashPassword = await bcrypt.hash(password, 10)
 
@@ -38,7 +38,7 @@ exports.register = async (req, res) => {
         })
 
         res.send('Register success')
-        
+
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Server Error" })
@@ -56,14 +56,14 @@ exports.login = async (req, res) => {
                 email: email
             }
         })
-        if(!user || !user.enabled) {
-            return res.status(400).json({ message: "User not found or not enabled"})
+        if (!user || !user.enabled) {
+            return res.status(400).json({ message: "User not found or not enabled" })
         }
 
         // Step 2 Check Password
         const isMatch = await bcrypt.compare(password, user.password)
-        if(!isMatch) {
-            return res.status(400).json({ message: "Password Invalid"})
+        if (!isMatch) {
+            return res.status(400).json({ message: "Password Invalid" })
         }
 
         // Step 3 Create Payload
@@ -74,12 +74,12 @@ exports.login = async (req, res) => {
         }
 
         // Step 4 Generate token
-        jwt.sign(paylode, process.env.SECRET, { expiresIn: '3h'},(err, token) => { // Use JWT to make token for secure login
-            if(err) {
-                return res.status(500).json({ message: "Server Error"})
+        jwt.sign(paylode, process.env.SECRET, { expiresIn: '3h' }, (err, token) => { // Use JWT to make token for secure login
+            if (err) {
+                return res.status(500).json({ message: "Server Error" })
             }
             res.json({ paylode, token })
-        }) 
+        })
 
     } catch (err) {
         console.log(err)
@@ -92,7 +92,16 @@ exports.currentUser = async (req, res) => {
 
     try {
         //code
-        res.send('Hello currentUser in Controllers')
+        const user = await prisma.user.findFirst({
+            where: { email: req.user.email },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true
+            }
+        })
+        res.json({ user })
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Server Error" })

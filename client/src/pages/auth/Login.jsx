@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate()
   const actionLogin = useEcomStore((state) => state.actionLogin)
   const user = useEcomStore((state) => state.user)
-  console.log('user form zustand', user)
+  //console.log('user form zustand', user)
 
   //Test zustand
   const bankbank = useEcomStore((state) => state.name)
@@ -39,6 +39,7 @@ const Login = () => {
       roleRedirect(role)
       toast.success('Welcome Back')
 
+
     } catch (err) {
       const errMsg = err.response?.data?.message
       toast.error(errMsg)
@@ -46,7 +47,6 @@ const Login = () => {
   }
 
   const roleRedirect = (role) => {
-    console.log('test')
     if (role === 'admin') {
       navigate('/admin')
     } else {

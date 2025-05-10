@@ -5,19 +5,23 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 const ecomStore = (set) => ({
     user: null,
     token: null,
+
     actionLogin: async (form) => {
         const res = await axios.post('http://localhost:5000/api/login', form)
         set({
-            user: res.data.payload,
+            user: res.data.paylode,
             token: res.data.token
         })
+
         return res
     }
+
 })
+
 
 const usePersist = {
     name: 'ecom-store',
-    storage: createJSONStorage(() => localStorage)
+    storage: createJSONStorage(() => localStorage),
 }
 
 const useEcomStore = create(persist(ecomStore, usePersist))
