@@ -2,13 +2,17 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import useEcomStore from '../../store/ecom-store';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   //Java script
+  const navigate = useNavigate()
+  const actionLogin = useEcomStore((state) => state.actionLogin)
+  const user = useEcomStore((state) => state.user)
+  console.log('user form zustand', user)
 
   //Test zustand
-  const bankbank = useEcomStore((state)=>state.name)
-  console.log(bankbank)
+  const bankbank = useEcomStore((state) => state.name)
 
   const [form, setForm] = useState({
     email: "",
@@ -28,18 +32,25 @@ const Login = () => {
 
   const handleSubmit = async (even) => {
     even.preventDefault()
-
     // Send to Backend
     try {
-      const res = await axios.post('http://localhost:5000/api/login', form)
-      
-      console.log(res)
-      toast.success(res.data)
+      const res = await actionLogin(form)
+      const role = res.data?.paylode?.role
+      roleRedirect(role)
+      toast.success('Welcome Back')
+
     } catch (err) {
-      //Response from backend to font
       const errMsg = err.response?.data?.message
       toast.error(errMsg)
-      console.log(err)
+    }
+  }
+
+  const roleRedirect = (role) => {
+    console.log('test')
+    if (role === 'admin') {
+      navigate('/admin')
+    } else {
+      navigate('/user')
     }
   }
 
